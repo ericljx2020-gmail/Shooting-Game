@@ -9,3 +9,7 @@
 
 ## Adding a new app with Django
 * use `python3 manage.py startapp **game**`
+
+## After making changes to the project, run `python3 manage.py migrate` to update
+
+## To create *admin*, use `python3 manage.py createsuperuser`.
