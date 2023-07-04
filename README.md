@@ -13,3 +13,7 @@
 ## After making changes to the project, run `python3 manage.py migrate` to update
 
 ## To create *admin*, use `python3 manage.py createsuperuser`.
+
+## to make pyton directory able to be imported. add __init__.py to the directory
+
+## set the TIMEZONE to shanghai: 'Asia/Shanghai' 
