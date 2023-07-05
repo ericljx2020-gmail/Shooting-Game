@@ -10,10 +10,14 @@
 ## Adding a new app with Django
 * use `python3 manage.py startapp **game**`
 
-## After making changes to the project, run `python3 manage.py migrate` to update
+## Migrate the update to the server:
+* run `python3 manage.py migrate` to update
 
-## To create *admin*, use `python3 manage.py createsuperuser`.
+## Create a superuser to the admin site
+* run `python3 manage.py createsuperuser`.
 
-## to make pyton directory able to be imported. add __init__.py to the directory
+## Making python folder able to be imported:
+* add a '__init__.py' to the folder
 
-## set the TIMEZONE to shanghai: 'Asia/Shanghai' 
+## Setting timezone:
+* change the string after TIMEZONE in setting.py to **Asia/Shanghai**
