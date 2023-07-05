@@ -21,3 +21,99 @@
 
 ## Setting timezone:
 * change the string after TIMEZONE in setting.py to **Asia/Shanghai**
+
+## The structure of the project as a whole:
+
+.
+|-- README.md
+|-- db.sqlite3
+|-- game
+|   |-- __init__.py
+|   |-- __pycache__
+|   |   |-- __init__.cpython-38.pyc
+|   |   |-- admin.cpython-38.pyc
+|   |   |-- apps.cpython-38.pyc
+|   |   |-- urls.cpython-38.pyc
+|   |   `-- views.cpython-38.pyc
+|   |-- admin.py
+|   |-- apps.py
+|   |-- migrations
+|   |   |-- __init__.py
+|   |   `-- __pycache__
+|   |       `-- __init__.cpython-38.pyc
+|   |-- models
+|   |   |-- __init__.py
+|   |   `-- __pycache__
+|   |       `-- __init__.cpython-38.pyc
+|   |-- static
+|   |   |-- css
+|   |   |   `-- game.css
+|   |   |-- image
+|   |   |   |-- menu
+|   |   |   |   `-- background.gif
+|   |   |   |-- playground
+|   |   |   `-- settings
+|   |   `-- js
+|   |       |-- dist
+|   |       |   `-- game.js
+|   |       `-- src
+|   |           `-- zbase.js
+|   |-- templates
+|   |   |-- menu
+|   |   |-- multiends
+|   |   |   `-- web.html
+|   |   |-- playground
+|   |   `-- settings
+|   |-- tests.py
+|   |-- urls
+|   |   |-- __init__.py
+|   |   |-- __pycache__
+|   |   |   |-- __init__.cpython-38.pyc
+|   |   |   `-- index.cpython-38.pyc
+|   |   |-- index.py
+|   |   |-- menu
+|   |   |   |-- __init__.py
+|   |   |   |-- __pycache__
+|   |   |   |   |-- __init__.cpython-38.pyc
+|   |   |   |   `-- index.cpython-38.pyc
+|   |   |   `-- index.py
+|   |   |-- playground
+|   |   |   |-- __init__.py
+|   |   |   |-- __pycache__
+|   |   |   |   |-- __init__.cpython-38.pyc
+|   |   |   |   `-- index.cpython-38.pyc
+|   |   |   `-- index.py
+|   |   `-- settings
+|   |       |-- __init__.py
+|   |       |-- __pycache__
+|   |       |   |-- __init__.cpython-38.pyc
+|   |       |   `-- index.cpython-38.pyc
+|   |       `-- index.py
+|   `-- views
+|       |-- __init__.py
+|       |-- __pycache__
+|       |   |-- __init__.cpython-38.pyc
+|       |   `-- index.cpython-38.pyc
+|       |-- index.py
+|       |-- menu
+|       |   `-- __init__.py
+|       |-- playground
+|       |   `-- __init__.py
+|       `-- settings
+|           `-- __init__.py
+|-- manage.py
+|-- myapp
+|   |-- __init__.py
+|   |-- __pycache__
+|   |   |-- __init__.cpython-38.pyc
+|   |   |-- settings.cpython-38.pyc
+|   |   |-- urls.cpython-38.pyc
+|   |   `-- wsgi.cpython-38.pyc
+|   |-- asgi.py
+|   |-- settings.py
+|   |-- urls.py
+|   `-- wsgi.py
+`-- scripts
+    `-- compress_game_js.sh
+
+36 directories, 54 files
