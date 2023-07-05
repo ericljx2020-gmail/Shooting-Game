@@ -1,0 +1,6 @@
+ass AcGame{
+    constructor(id) {
+        
+    }
+
+}
