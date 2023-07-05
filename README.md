@@ -23,7 +23,7 @@
 * change the string after TIMEZONE in setting.py to **Asia/Shanghai**
 
 ## The structure of the project as a whole:
-
+```
 .
 |-- README.md
 |-- db.sqlite3
@@ -117,3 +117,4 @@
     `-- compress_game_js.sh
 
 36 directories, 54 files
+```
