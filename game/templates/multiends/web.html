@@ -9,7 +9,8 @@
 
 <body style="margin: 0">
     <div id="ac_game_12345678"></div>
-    <script>
+    <script type="module">
+        import {AcGame} from "{% static 'js/dist/game.js' %}";
         $(document).ready(function(){
             let ac_game = new AcGame("ac_game_12345678");
         });
