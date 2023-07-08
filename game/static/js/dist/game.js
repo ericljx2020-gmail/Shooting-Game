@@ -127,6 +127,46 @@ class GameMap extends AcGameObject{
         this.ctx.fillRect(0,0,this.ctx.canvas.width, this.ctx.canvas.height);
     }
 }
+class Particle extends AcGameObject{
+    constructor(playground, x, y, radius, vx, vy, color, speed, move_length){
+        super();
+        this.playground = playground;
+        this.ctx = this.playground.game_map.ctx;
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.vx = vx;
+        this.vy = vy;
+        this.color = color;
+        this.speed = speed;
+        this.move_length = move_length;
+        this.eps = 0.1;
+        this.friction = 0.9;
+    }
+
+    start(){
+    }
+
+
+    update(){
+        if (this.speed < 2){
+            this.destroy();
+            return false;
+        }
+        console.log(this.x, this.y);
+        this.x += this.vx * this.speed * this.timedelta / 1000;
+        this.y += this.vy * this.speed * this.timedelta / 1000;
+        this.speed *= this.friction;
+        this.render();
+    }
+
+    render(){
+        this.ctx.beginPath();
+        this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        this.ctx.fillStyle = this.color;
+        this.ctx.fill();
+    }
+}
 class Player extends AcGameObject{
     constructor(playground, x, y, radius, color, speed, is_me){
         super();
@@ -201,6 +241,19 @@ class Player extends AcGameObject{
 
     is_attacked(angle, damage){
         this.radius -= damage;
+        console.log("attacked!");
+        for (let i = 0; i < 20 + Math.random() * 10; i++){
+            let x = this.x, y = this.y;
+            let radius = Math.max(this.radius * Math.random() * 0.1, 0);
+            let degree = Math.random() * Math.PI * 2;
+            let vx = Math.cos(degree);
+            let vy = Math.sin(degree);
+            let color = this.color;
+            let speed = this.speed * 10;
+            let move_length = 5;
+            console.log("particle!");
+            new Particle(this.playground, x, y, radius, vx, vy, color, speed, move_length);
+        }
         if (this.radius < 10){
             this.destroy();
             return false;
@@ -342,7 +395,7 @@ class AcGamePlayground{
         this.players.push(new Player(this, this.width/2, this.height/2, this.height * 0.05, "white", this.height * 0.15, true));
 
         for (let i = 0; i < 5; i++){
-            this.players.push(new Player(this, this.width/2, this.height/2, this.height * 0.05,     "green", this.height * 0.15, false));
+            this.players.push(new Player(this, this.width/2, this.height/2, this.height * 0.05, this.get_random_color()  , this.height * 0.15, false));
         }
     }
 
@@ -350,6 +403,11 @@ class AcGamePlayground{
     }
 
     update(){
+    }
+    
+    get_random_color(){
+        let color = ["pink", "green", "indigo", "grey", "yellow"];
+        return color[Math.floor(Math.random() * 5)];
     }
 
     show(){     //open playground scene

@@ -72,6 +72,19 @@ class Player extends AcGameObject{
 
     is_attacked(angle, damage){
         this.radius -= damage;
+        console.log("attacked!");
+        for (let i = 0; i < 20 + Math.random() * 10; i++){
+            let x = this.x, y = this.y;
+            let radius = Math.max(this.radius * Math.random() * 0.1, 0);
+            let degree = Math.random() * Math.PI * 2;
+            let vx = Math.cos(degree);
+            let vy = Math.sin(degree);
+            let color = this.color;
+            let speed = this.speed * 10;
+            let move_length = 5;
+            console.log("particle!");
+            new Particle(this.playground, x, y, radius, vx, vy, color, speed, move_length);
+        }
         if (this.radius < 10){
             this.destroy();
             return false;
