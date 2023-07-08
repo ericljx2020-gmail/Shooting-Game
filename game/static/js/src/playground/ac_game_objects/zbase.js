@@ -13,12 +13,12 @@ class AcGameObject{
     update(){       //execute on every frame
     }
 
-    ondestroy(){    //excute before being deleted
+    on_destroy(){    //excute before being deleted
     }
 
     destroy(){      //delete an object
 
-        this.ondestroy();
+        this.on_destroy();
         for (let i = 0; i < AC_GAME_OBJECTS.length; i++){
             if (AC_GAME_OBJECTS[i] === this){
                 AC_GAME_OBJECTS.splice(i,1);

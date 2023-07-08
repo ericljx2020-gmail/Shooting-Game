@@ -24,7 +24,6 @@ class Particle extends AcGameObject{
             this.destroy();
             return false;
         }
-        console.log(this.x, this.y);
         this.x += this.vx * this.speed * this.timedelta / 1000;
         this.y += this.vy * this.speed * this.timedelta / 1000;
         this.speed *= this.friction;
