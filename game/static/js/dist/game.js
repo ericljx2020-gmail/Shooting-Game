@@ -149,6 +149,10 @@ class Player extends AcGameObject{
     start(){
         if (this.is_me) {
             this.add_listening_events();
+        }else{
+            let tx = Math.random() * this.playground.width;
+            let ty = Math.random() * this.playground.height;
+            this.move_to(tx,ty);
         }
     }
 
@@ -186,8 +190,8 @@ class Player extends AcGameObject{
         let vx = Math.cos(angle);
         let vy = Math.sin(angle);
         let color = "orange";
-        let speed = this.playground.height * 0.5;
-        let move_length = this.playground.height * 1.5;
+        let speed = this.playground.height * 0.6;
+        let move_length = this.playground.height * 0.8
         new FireBall(this.playground, this, x,y,radius,vx,vy,color,speed, move_length);
     }
 
@@ -206,15 +210,22 @@ class Player extends AcGameObject{
     }
 
     update(){
-        if (this.move_length < this.epa){
+
+        if (this.move_length < this.eps){
             this.move_length = 0;
             this.vx = this.vy = 0;
+            if (!this.is_me){
+                let tx = Math.random() * this.playground.width;
+                let ty = Math.random() * this.playground.height;
+                this.move_to(tx,ty);
+            }
         }else{
             let moved = Math.min(this.move_length, this.speed * this.timedelta / 1000);
             this.x += this.vx * moved;  // moved/1 * vx更好理解
             this.y += this.vy * moved;
             this.move_length -= moved;
         }
+
         this.render();
     }
 
@@ -276,6 +287,10 @@ class AcGamePlayground{
         this.game_map = new GameMap(this);
         this.players = [];
         this.players.push(new Player(this, this.width/2, this.height/2, this.height * 0.05, "white", this.height * 0.15, true));
+
+        for (let i = 0; i < 5; i++){
+            this.players.push(new Player(this, this.width/2, this.height/2, this.height * 0.05,     "green", this.height * 0.15, false));
+        }
     }
 
     start(){
