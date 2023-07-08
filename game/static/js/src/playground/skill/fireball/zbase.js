@@ -1,5 +1,6 @@
 class FireBall extends AcGameObject{
     constructor(playground, player, x, y, radius, vx, vy, color, speed, move_length){
+        super();
         this.playground = playground;
         this.player = player;
         this.ctx = this.playground.game_map.ctx;

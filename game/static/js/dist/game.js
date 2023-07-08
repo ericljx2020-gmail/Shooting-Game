@@ -179,7 +179,16 @@ class Player extends AcGameObject{
     }
     
     shoot_fireball(tx, ty){
-        console.log("xxx");
+        //first we need to find the parameter of the fireball
+        let x = this.x, y = this.y;
+        let radius = this.playground.height * 0.02;
+        let angle = Math.atan2(ty-this.y, tx-this.x);
+        let vx = Math.cos(angle);
+        let vy = Math.sin(angle);
+        let color = "orange";
+        let speed = this.playground.height * 0.5;
+        let move_length = this.playground.height * 1.5;
+        new FireBall(this.playground, this, x,y,radius,vx,vy,color,speed, move_length);
     }
 
     get_dist(x,y,tx,ty){
@@ -218,6 +227,7 @@ class Player extends AcGameObject{
 }
 class FireBall extends AcGameObject{
     constructor(playground, player, x, y, radius, vx, vy, color, speed, move_length){
+        super();
         this.playground = playground;
         this.player = player;
         this.ctx = this.playground.game_map.ctx;
