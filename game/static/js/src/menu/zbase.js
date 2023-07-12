@@ -5,15 +5,15 @@ class AcGameMenu{
             <div class="ac-game-menu">
                 <div class="ac-game-menu-field">
                     <div class="ac-game-menu-field-item ac-game-menu-field-item-single-mode">
-                        Single Player
+                        单人模式
                     </div>
                     <br>
                     <div class="ac-game-menu-field-item ac-game-menu-field-item-multi-mode">
-                        Multi Player
+                        多人模式
                     </div>
                     <br>
                     <div class="ac-game-menu-field-item ac-game-menu-field-item-settings">
-                        Setting
+                        登出
                     </div>
 
                 </div>
@@ -42,7 +42,7 @@ class AcGameMenu{
             console.log("Multi mode clicked");
         });
         this.$settings.click(function(){
-            console.log("Setting clicked");
+            outer.root.settings.logout_on_remote();
         });
     }
 

@@ -46,7 +46,7 @@
 }
 
 .ac-game-settings-login{
-    height: 41vh;
+    height: 42vh;
     width: 20vw;
     position: relative;
     top: 50%;
@@ -56,7 +56,7 @@
 }
 
 .ac-game-settings-register{
-    height: 41vh;
+    height: 47vh;
     width: 20vw;
     position: relative;
     top: 50%;
@@ -72,7 +72,6 @@
     color: white;
     font-size: 3vh;
     padding-top:2vh;
-    margin-bottom:2vh;
 
 }
 
@@ -104,14 +103,14 @@
 }
 
 .ac-game-settings-item > input{
-    color: white;
+    color: black;
     width: 90%;
     line-height:3vh;
     position: relative;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(255,255,255,0.9);
 
 }
 
@@ -138,7 +137,14 @@
 
 }
 
-.ac-game-settings-error-messages {
+.ac-game-settings-item > div {
+    padding-top: 1vh;
+    font-size: 1.5vh;
+    color: white;
+    text-align: center;
+}
+
+.ac-game-settings-error-message {
     color: red;
     font-size: 1.3vh;
     display: inline;
