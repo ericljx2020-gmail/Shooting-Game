@@ -130,6 +130,7 @@ class Settings{
 
         this.$acwing_login.click(function(){
             outer.acwing_login();
+            //console.log("acwing clicked");
         })
     }
 
@@ -161,6 +162,7 @@ class Settings{
                 console.log(resp);
                 if (resp.result === "success"){
                     window.location.replace(resp.apply_code_url); 
+                    //console.log(resp.apply_code_url);
                 }
             }
         })

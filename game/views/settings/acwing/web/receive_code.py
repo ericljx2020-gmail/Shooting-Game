@@ -25,10 +25,14 @@ def receive_code(request):
     access_token_res = requests.get(apply_access_token_url, params=params).json()
     access_token = access_token_res['access_token']
     openid = access_token_res['openid']
+    print(access_token_res)
 
     players = Player.objects.filter(openid=openid)
     if players.exists():                    #如果该用户已存在，直接获取信息即可
         login(request,players[0].user)
+        print(players[0].photo)
+        #print("!!!!!!!!!!!!")
+        #print(players)
         return redirect("index")
 
     get_userinfo_url = "https://www.acwing.com/third_party/api/meta/identity/getinfo/"
