@@ -254,7 +254,7 @@ class Settings{
         this.root.AcWingOS.api.oauth2.authorize(appid, redirect_uri, scope, state, function(resp){
             console.log(resp);
             if (resp.result === "success"){
-                outer.username = resp.uername;
+                outer.username = resp.username;
                 outer.photo = resp.photo;
                 outer.hide();
                 outer.root.menu.show();

@@ -5,7 +5,7 @@ class AcGamePlayground{
         this.hide();
 
         this.root.$ac_game.append(this.$playground);
-		
+
         this.start();
 
 
@@ -20,7 +20,7 @@ class AcGamePlayground{
 
     update(){
     }
-    
+
     get_random_color(){
         let color = ["pink", "green", "indigo", "grey", "yellow"];
         return color[Math.floor(Math.random() * 5)];
@@ -36,20 +36,32 @@ class AcGamePlayground{
         this.scale = this.height;
 
         if (this.game_map) this.game_map.resize();
-         
+
     }
 
-    show(){     //open playground scene
+    show(mode){     //open playground scene
+        let outer = this;
         this.$playground.show();
         this.resize();
         this.width = this.$playground.width();
         this.height = this.$playground.height();
         this.game_map = new GameMap(this);
-        this.players = [];
-        this.players.push(new Player(this, this.width/2/this.height, 0.5, 0.05, "white", 0.15, true));
+ 
+        this.resize();
 
-        for (let i = 0; i < 5; i++){
-            this.players.push(new Player(this, this.width/2/this.height, 0.5, 0.05, this.get_random_color()  , 0.15, false));
+        this.players = [];
+        this.players.push(new Player(this, this.width/2/this.height, 0.5, 0.05, "white", 0.15, "me", this.root.settings.username, this.root.settings.photo));
+        if (mode === "single mode"){
+            for (let i = 0; i < 5; i++){
+                this.players.push(new Player(this, this.width/2/this.height, 0.5, 0.05, this.get_random_color()  , 0.15, "robot"));
+            }
+        }else{
+            console.log("multiplayer mode");
+            this.mps = new MultiPlayerSocket(this);
+            this.mps.uuid = this.players[0].uuid;
+            this.mps.ws.onopen = function(){
+                outer.mps.send_create_player(outer.root.settings.username, outer.root.settings.photo);
+            };
         }
 
     }
