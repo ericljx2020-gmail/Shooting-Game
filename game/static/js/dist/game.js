@@ -285,7 +285,6 @@ class Player extends AcGameObject{
             new Particle(this.playground, x, y, radius, vx, vy, color, speed, move_length);
         }
         if (this.radius < this.eps){
-            console.log("destroy executed");
             this.destroy();
             return false;
         }
@@ -448,7 +447,6 @@ class FireBall extends AcGameObject{
 }
 class MultiPlayerSocket{
     constructor(playground){
-        console.log("socket constructor");
         this.playground = playground;
 
         this.ws = new WebSocket("wss://app5694.acapp.acwing.com.cn/wss/multiplayer/")
@@ -465,7 +463,6 @@ class MultiPlayerSocket{
         this.ws.onmessage = function(e){
             let data = JSON.parse(e.data);
             let uuid = data.uuid;
-            console.log(uuid, data.uuid, outer.uuid);
             if (uuid === outer.uuid){
                 return false;
             }
@@ -533,7 +530,6 @@ class AcGamePlayground{
     }
 
     resize(){
-        console.log("resize");
         this.width = this.$playground.width();
         this.height = this.$playground.height();
         let unit = Math.min(this.width / 16, this.height / 9);
@@ -562,7 +558,6 @@ class AcGamePlayground{
                 this.players.push(new Player(this, this.width/2/this.height, 0.5, 0.05, this.get_random_color()  , 0.15, "robot"));
             }
         }else{
-            console.log("multiplayer mode");
             this.mps = new MultiPlayerSocket(this);
             this.mps.uuid = this.players[0].uuid;
             this.mps.ws.onopen = function(){
@@ -697,8 +692,6 @@ class Settings{
     }
 
     start(){
-        console.log(this.platform)
-        console.log("!!!!!!")
         if (this.platform === "ACAPP") {
             this.getinfo_acapp();
         }else{
@@ -714,7 +707,6 @@ class Settings{
 
         this.$acwing_login.click(function(){
             outer.acwing_login();
-            //console.log("acwing clicked");
         })
     }
 
@@ -743,10 +735,8 @@ class Settings{
             url: "https://app5694.acapp.acwing.com.cn/settings/acwing/web/apply_code",
             type: "GET",
             success: function(resp){
-                console.log(resp);
                 if (resp.result === "success"){
                     window.location.replace(resp.apply_code_url); 
-                    //console.log(resp.apply_code_url);
                 }
             }
         })
@@ -766,7 +756,6 @@ class Settings{
                 password: password,
             },
             success: function(resp){
-                console.log(resp);
                 if (resp.result === "success"){
                     location.reload();
                 }else{
@@ -792,7 +781,6 @@ class Settings{
                 password_confirm: password_confirm,
             },
             success: function(resp){
-                console.log(resp);
                 if (resp.result === "success") {
                     location.reload();
                 }else{
@@ -812,7 +800,6 @@ class Settings{
                 if (resp.result === "success"){
                     location.reload();
                 }
-                console.log(resp.result);
             }
         });
     }
@@ -830,7 +817,6 @@ class Settings{
     login_acapp(appid, redirect_uri, scope, state){
         let outer = this;
         this.root.AcWingOS.api.oauth2.authorize(appid, redirect_uri, scope, state, function(resp){
-            console.log(resp);
             if (resp.result === "success"){
                 outer.username = resp.username;
                 outer.photo = resp.photo;
@@ -863,11 +849,9 @@ class Settings{
                 platform:outer.platform,
             },
             success:function(resp){
-                console.log(resp);
                 if (resp.result === "success"){
                     outer.username = resp.username;
                     outer.photo = resp.photo;
-                    console.log(resp.photo, resp.username);
                     outer.hide();
                     outer.root.menu.show();
                 }else{

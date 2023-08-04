@@ -91,7 +91,6 @@ class Player extends AcGameObject{
             new Particle(this.playground, x, y, radius, vx, vy, color, speed, move_length);
         }
         if (this.radius < this.eps){
-            console.log("destroy executed");
             this.destroy();
             return false;
         }

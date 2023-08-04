@@ -27,7 +27,6 @@ class AcGamePlayground{
     }
 
     resize(){
-        console.log("resize");
         this.width = this.$playground.width();
         this.height = this.$playground.height();
         let unit = Math.min(this.width / 16, this.height / 9);
@@ -56,7 +55,6 @@ class AcGamePlayground{
                 this.players.push(new Player(this, this.width/2/this.height, 0.5, 0.05, this.get_random_color()  , 0.15, "robot"));
             }
         }else{
-            console.log("multiplayer mode");
             this.mps = new MultiPlayerSocket(this);
             this.mps.uuid = this.players[0].uuid;
             this.mps.ws.onopen = function(){

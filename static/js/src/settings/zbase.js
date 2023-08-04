@@ -119,8 +119,6 @@ class Settings{
     }
 
     start(){
-        console.log(this.platform)
-        console.log("!!!!!!")
         if (this.platform === "ACAPP") {
             this.getinfo_acapp();
         }else{
@@ -136,7 +134,6 @@ class Settings{
 
         this.$acwing_login.click(function(){
             outer.acwing_login();
-            //console.log("acwing clicked");
         })
     }
 
@@ -165,10 +162,8 @@ class Settings{
             url: "https://app5694.acapp.acwing.com.cn/settings/acwing/web/apply_code",
             type: "GET",
             success: function(resp){
-                console.log(resp);
                 if (resp.result === "success"){
                     window.location.replace(resp.apply_code_url); 
-                    //console.log(resp.apply_code_url);
                 }
             }
         })
@@ -188,7 +183,6 @@ class Settings{
                 password: password,
             },
             success: function(resp){
-                console.log(resp);
                 if (resp.result === "success"){
                     location.reload();
                 }else{
@@ -214,7 +208,6 @@ class Settings{
                 password_confirm: password_confirm,
             },
             success: function(resp){
-                console.log(resp);
                 if (resp.result === "success") {
                     location.reload();
                 }else{
@@ -234,7 +227,6 @@ class Settings{
                 if (resp.result === "success"){
                     location.reload();
                 }
-                console.log(resp.result);
             }
         });
     }
@@ -252,7 +244,6 @@ class Settings{
     login_acapp(appid, redirect_uri, scope, state){
         let outer = this;
         this.root.AcWingOS.api.oauth2.authorize(appid, redirect_uri, scope, state, function(resp){
-            console.log(resp);
             if (resp.result === "success"){
                 outer.username = resp.username;
                 outer.photo = resp.photo;
@@ -285,11 +276,9 @@ class Settings{
                 platform:outer.platform,
             },
             success:function(resp){
-                console.log(resp);
                 if (resp.result === "success"){
                     outer.username = resp.username;
                     outer.photo = resp.photo;
-                    console.log(resp.photo, resp.username);
                     outer.hide();
                     outer.root.menu.show();
                 }else{

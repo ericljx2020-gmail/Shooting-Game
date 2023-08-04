@@ -1,6 +1,5 @@
 class MultiPlayerSocket{
     constructor(playground){
-        console.log("socket constructor");
         this.playground = playground;
 
         this.ws = new WebSocket("wss://app5694.acapp.acwing.com.cn/wss/multiplayer/")
@@ -17,7 +16,6 @@ class MultiPlayerSocket{
         this.ws.onmessage = function(e){
             let data = JSON.parse(e.data);
             let uuid = data.uuid;
-            console.log(uuid, data.uuid, outer.uuid);
             if (uuid === outer.uuid){
                 return false;
             }
