@@ -212,6 +212,7 @@ class Player extends AcGameObject{
         this.username = username;
         this.photo = photo;
         this.eps = 0.01;
+        this.fireballs = [];
         this.friction = 0.9;
         this.cooling_time = 0;
         this.cur_skill = null;
@@ -228,6 +229,7 @@ class Player extends AcGameObject{
             let tx = Math.random() * this.playground.width / this.playground.scale;
             let ty = Math.random() * this.playground.height / this.playground.scale;
             this.move_to(tx,ty);
+
         }
     }
 
@@ -239,10 +241,21 @@ class Player extends AcGameObject{
         this.playground.game_map.$canvas.mousedown(function(e) {
             const rect = outer.ctx.canvas.getBoundingClientRect();
             if (e.which === 3) {        //rightclick
-                outer.move_to((e.clientX - rect.left) / outer.playground.scale, (e.clientY - rect.top) / outer.playground.scale);
+                let tx = (e.clientX - rect.left) / outer.playground.scale
+                let ty = (e.clientY - rect.top) / outer.playground.scale
+                outer.move_to(tx,ty);
+                if (outer.playground.mode === "multi mode"){
+                    outer.playground.mps.send_move_to(tx,ty);
+                }
             }else if (e.which === 1){   //leftclick
+                let tx = (e.clientX - rect.left) / outer.playground.scale;
+                let ty = (e.clientY-rect.top) / outer.playground.scale;
                 if (outer.cur_skill === "fireball"){
-                    outer.shoot_fireball((e.clientX - rect.left) / outer.playground.scale, (e.clientY-rect.top) / outer.playground.scale);
+                    let fireball = outer.shoot_fireball(tx, ty);
+                    
+                    if (outer.playground.mode === "multi mode"){
+                        outer.playground.mps.send_shoot_fireball(tx,ty,fireball.uuid);
+                    }
                 }
                 outer.cur_skill = null;
             }
@@ -268,7 +281,19 @@ class Player extends AcGameObject{
         let color = "orange";
         let speed = 0.6;
         let move_length = 0.8
-        new FireBall(this.playground, this, x,y,radius,vx,vy,color,speed, move_length, 0.01);
+        let fireball = new FireBall(this.playground, this, x,y,radius,vx,vy,color,speed, move_length, 0.01);
+        this.fireballs.push(fireball);
+        return fireball;
+    }
+
+    destroy_fireball(uuid){
+        for (let i = 0; i < this.fireballs.length; i++){
+            let fireball = this.fireballs[i];
+            if (fireball.uuid === uuid){
+                fireball.destroy();
+                break;
+            }
+        }
     }
 
     is_attacked(angle, damage){
@@ -330,7 +355,7 @@ class Player extends AcGameObject{
             this.damage_speed *= this.friction;
         }else{
 
-            if (this.move_length < this.eps*10){
+            if (this.move_length < this.eps){
                 this.move_length = 0;
                 this.vx = this.vy = 0;
                 if (this.character === "robot"){
@@ -369,7 +394,7 @@ class Player extends AcGameObject{
         for (let i = 0; i < this.playground.players.length; i++){
             if(this.playground.players[i] === this){
                 this.playground.players.splice(i,1);
-                return false;
+                break;
             }
         }
     }
@@ -399,21 +424,29 @@ class FireBall extends AcGameObject{
         if (this.move_length < this.eps){
             this.destroy();
             return false;
-        }else{
-            let moved = Math.min(this.move_length, this.speed * this.timedelta/1000);
-            this.x += this.vx * moved;
-            this.y += this.vy * moved;
-            this.move_length -= moved;
         }
 
+        this.update_move();
+        this.update_attack();
+
+        this.render();
+    }
+
+    update_move(){
+        let moved = Math.min(this.move_length, this.speed * this.timedelta/1000);
+        this.x += this.vx * moved;
+        this.y += this.vy * moved;
+        this.move_length -= moved;
+    }
+
+    update_attack(){
         for (let i = 0; i < this.playground.players.length; i++){
             let player = this.playground.players[i];
             if (this.player !== player && this.is_collision(player)){
                 this.attack_player(player);
+                break;                                  //break了每一次就只能打一个
             }
         }
-
-        this.render();
     }
 
     get_dist(x1, y1, x2, y2){
@@ -444,6 +477,16 @@ class FireBall extends AcGameObject{
         this.ctx.fillStyle = this.color;
         this.ctx.fill();
     }
+
+    on_destroy(){
+        let fireballs = this.player.fireballs;
+        for (let i = 0; i < fireballs.length; i++){
+            if (fireballs[i] === this){
+                fireballs.splice(i,1);
+                break;
+            }
+        }
+    }
 }
 class MultiPlayerSocket{
     constructor(playground){
@@ -460,7 +503,8 @@ class MultiPlayerSocket{
 
     receive(){
         let outer = this;
-        this.ws.onmessage = function(e){
+        console.log(this);
+        this.ws.onmessage = function(e){            //接收send发送过来的信息
             let data = JSON.parse(e.data);
             let uuid = data.uuid;
             if (uuid === outer.uuid){
@@ -470,18 +514,31 @@ class MultiPlayerSocket{
             let event = data.event;
             if (event === "create_player"){
                 outer.receive_create_player(uuid, data.username, data.photo);
+            } else if (event === "move_to"){
+                outer.receive_move_to(uuid, data.tx, data.ty);
+            } else if (event === "shoot_fireball"){
+                outer.receive_shoot_fireball(uuid, data.tx, data.ty, data.ball_uuid);
             }
         };
     }
 
     send_create_player(username, photo){
         let outer = this;
-        this.ws.send(JSON.stringify({
+        this.ws.send(JSON.stringify({       //send 用websocket服务器给别的玩家发信息
             'event':"create_player",
             'uuid':outer.uuid,
             'username':username,
             'photo':photo,
         }));
+    }
+
+    get_player(uuid){
+        let players = this.playground.players;
+        for (let i = 0; i < players.length; i++){
+            let player = players[i];
+            if (player.uuid === uuid) return player;
+        }
+        return null;
     }
 
     receive_create_player(uuid, username, photo){
@@ -499,6 +556,52 @@ class MultiPlayerSocket{
 
         player.uuid = uuid;
         this.playground.players.push(player);
+    }
+
+    send_move_to(tx, ty){
+        let outer = this;
+        this.ws.send(JSON.stringify({
+            'event':"move_to",
+            'uuid':outer.uuid,
+            'tx':tx,
+            'ty':ty,
+        }));
+    }
+
+    receive_move_to(uuid, tx, ty){
+        let player = this.get_player(uuid);
+        if (player){
+            player.move_to(tx,ty);
+        }
+    }
+
+    send_shoot_fireball(tx, ty, ball_uuid){
+        let outer = this;
+        this.ws.send(JSON.stringify({           //传输到后端
+            'event':"shoot_fireball",
+            'uuid':outer.uuid,                  //发射火球的球的uuid
+            'tx':tx,
+            'ty':ty,
+            'ball_uuid':ball_uuid,              //火球的uuid
+        }))
+    }
+
+    destroy_fireball(uuid){
+        for (let i = 0; i < this.fireballs.length; i++){
+            let fireball = this.fireballs[i];
+            if (fireball.uuid === uuid){
+                fireball.destroy();
+                break;
+            }
+        }
+    }
+
+    receive_shoot_fireball(uuid, tx, ty, ball_uuid){
+        let player = this.get_player(uuid);
+        if (player){
+            let fireball = player.shoot_fireball(tx,ty);
+            fireball.uuid = ball_uuid;                      //全部屏幕里的uuid统一成唯一的
+        }
     }
 }
 class AcGamePlayground{
@@ -548,6 +651,8 @@ class AcGamePlayground{
         this.width = this.$playground.width();
         this.height = this.$playground.height();
         this.game_map = new GameMap(this);
+
+        this.mode = mode;
  
         this.resize();
 
@@ -560,7 +665,7 @@ class AcGamePlayground{
         }else{
             this.mps = new MultiPlayerSocket(this);
             this.mps.uuid = this.players[0].uuid;
-            this.mps.ws.onopen = function(){
+            this.mps.ws.onopen = function(){                //当multiplayer的窗口被打开的时候
                 outer.mps.send_create_player(outer.root.settings.username, outer.root.settings.photo);
             };
         }
@@ -793,15 +898,19 @@ class Settings{
 
     logout_on_remote() {
         let outer = this;
-        $.ajax({
-            url: "https://app5694.acapp.acwing.com.cn/settings/logout/",
-            type: "GET",
-            success: function(resp){
-                if (resp.result === "success"){
-                    location.reload();
+        if (this.platform === "ACAPP"){
+            this.root.AcWingOS.api.window.close();
+        }else{
+            $.ajax({
+                url: "https://app5694.acapp.acwing.com.cn/settings/logout/",
+                type: "GET",
+                success: function(resp){
+                    if (resp.result === "success"){
+                        location.reload();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
     
     login(){        //打开登陆界面

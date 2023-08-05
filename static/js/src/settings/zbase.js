@@ -220,15 +220,19 @@ class Settings{
 
     logout_on_remote() {
         let outer = this;
-        $.ajax({
-            url: "https://app5694.acapp.acwing.com.cn/settings/logout/",
-            type: "GET",
-            success: function(resp){
-                if (resp.result === "success"){
-                    location.reload();
+        if (this.platform === "ACAPP"){
+            this.root.AcWingOS.api.window.close();
+        }else{
+            $.ajax({
+                url: "https://app5694.acapp.acwing.com.cn/settings/logout/",
+                type: "GET",
+                success: function(resp){
+                    if (resp.result === "success"){
+                        location.reload();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
     
     login(){        //打开登陆界面

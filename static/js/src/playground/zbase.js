@@ -45,6 +45,8 @@ class AcGamePlayground{
         this.width = this.$playground.width();
         this.height = this.$playground.height();
         this.game_map = new GameMap(this);
+
+        this.mode = mode;
  
         this.resize();
 
@@ -57,7 +59,7 @@ class AcGamePlayground{
         }else{
             this.mps = new MultiPlayerSocket(this);
             this.mps.uuid = this.players[0].uuid;
-            this.mps.ws.onopen = function(){
+            this.mps.ws.onopen = function(){                //当multiplayer的窗口被打开的时候
                 outer.mps.send_create_player(outer.root.settings.username, outer.root.settings.photo);
             };
         }

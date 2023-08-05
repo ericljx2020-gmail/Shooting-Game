@@ -13,7 +13,8 @@ class MultiPlayerSocket{
 
     receive(){
         let outer = this;
-        this.ws.onmessage = function(e){
+        console.log(this);
+        this.ws.onmessage = function(e){            //接收send发送过来的信息
             let data = JSON.parse(e.data);
             let uuid = data.uuid;
             if (uuid === outer.uuid){
@@ -23,18 +24,31 @@ class MultiPlayerSocket{
             let event = data.event;
             if (event === "create_player"){
                 outer.receive_create_player(uuid, data.username, data.photo);
+            } else if (event === "move_to"){
+                outer.receive_move_to(uuid, data.tx, data.ty);
+            } else if (event === "shoot_fireball"){
+                outer.receive_shoot_fireball(uuid, data.tx, data.ty, data.ball_uuid);
             }
         };
     }
 
     send_create_player(username, photo){
         let outer = this;
-        this.ws.send(JSON.stringify({
+        this.ws.send(JSON.stringify({       //send 用websocket服务器给别的玩家发信息
             'event':"create_player",
             'uuid':outer.uuid,
             'username':username,
             'photo':photo,
         }));
+    }
+
+    get_player(uuid){
+        let players = this.playground.players;
+        for (let i = 0; i < players.length; i++){
+            let player = players[i];
+            if (player.uuid === uuid) return player;
+        }
+        return null;
     }
 
     receive_create_player(uuid, username, photo){
@@ -52,5 +66,51 @@ class MultiPlayerSocket{
 
         player.uuid = uuid;
         this.playground.players.push(player);
+    }
+
+    send_move_to(tx, ty){
+        let outer = this;
+        this.ws.send(JSON.stringify({
+            'event':"move_to",
+            'uuid':outer.uuid,
+            'tx':tx,
+            'ty':ty,
+        }));
+    }
+
+    receive_move_to(uuid, tx, ty){
+        let player = this.get_player(uuid);
+        if (player){
+            player.move_to(tx,ty);
+        }
+    }
+
+    send_shoot_fireball(tx, ty, ball_uuid){
+        let outer = this;
+        this.ws.send(JSON.stringify({           //传输到后端
+            'event':"shoot_fireball",
+            'uuid':outer.uuid,                  //发射火球的球的uuid
+            'tx':tx,
+            'ty':ty,
+            'ball_uuid':ball_uuid,              //火球的uuid
+        }))
+    }
+
+    destroy_fireball(uuid){
+        for (let i = 0; i < this.fireballs.length; i++){
+            let fireball = this.fireballs[i];
+            if (fireball.uuid === uuid){
+                fireball.destroy();
+                break;
+            }
+        }
+    }
+
+    receive_shoot_fireball(uuid, tx, ty, ball_uuid){
+        let player = this.get_player(uuid);
+        if (player){
+            let fireball = player.shoot_fireball(tx,ty);
+            fireball.uuid = ball_uuid;                      //全部屏幕里的uuid统一成唯一的
+        }
     }
 }

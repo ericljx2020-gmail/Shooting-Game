@@ -45,7 +45,7 @@ class MultiPlayer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.room_name,
             {
-                'type':"group_create_player",          #type指明了将这些信息发送给哪一个函数名，这里group_create_player
+                'type':"group_send_event",          #type指明了将这些信息发送给哪一个函数名，这里group_create_player
                 'event':"create_player",
                 'uuid':data['uuid'],
                 'username':data['username'],
@@ -53,8 +53,33 @@ class MultiPlayer(AsyncWebsocketConsumer):
             }
         )
 
-    async def group_create_player(self, data):
+    async def group_send_event(self, data):
         await self.send(text_data=json.dumps(data))
+
+    async def move_to(self, data):
+        await self.channel_layer.group_send(
+            self.room_name,
+            {
+                'type':"group_send_event",
+                'event':"move_to",
+                'uuid':data['uuid'],
+                'tx':data['tx'],
+                'ty':data['ty'],
+            }
+        )
+
+    async def shoot_fireball(self, data):
+        await self.channel_layer.group_send(
+            self.room_name,
+            {
+                'type':"group_send_event",
+                'event':"shoot_fireball",
+                'uuid':data['uuid'],
+                'tx':data['tx'],
+                'ty':data['ty'],
+                'ball_uuid':data['ball_uuid'],
+            }
+        )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -62,3 +87,7 @@ class MultiPlayer(AsyncWebsocketConsumer):
         if event == "create_player":
             await self.create_player(data)
             #print("create_player")
+        elif event == "move_to":
+            await self.move_to(data)
+        elif event == "shoot_fireball":
+            await self.shoot_fireball(data)
