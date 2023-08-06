@@ -125,6 +125,13 @@ class Player extends AcGameObject{
 
     }
 
+    receive_attack(x, y, angle, damage, ball_uuid, attacker){
+        attacker.destroy_fireball(ball_uuid);
+        this.x = x;
+        this.y = y;
+        this.is_attacked(angle, damage);
+    }
+
     get_dist(x,y,tx,ty){
         let dx = tx-x;
         let dy = ty-y;

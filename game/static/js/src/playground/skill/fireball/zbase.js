@@ -26,8 +26,9 @@ class FireBall extends AcGameObject{
         }
 
         this.update_move();
-        this.update_attack();
-
+        if (this.player.character !== "enemy"){
+            this.update_attack();           //只有发射这个火球的人是me的时候，才判断碰撞
+        }
         this.render();
     }
 
@@ -66,6 +67,10 @@ class FireBall extends AcGameObject{
     attack_player(player){
         let angle = Math.atan2(player.y - this.y, player.x - this.x);
         player.is_attacked(angle, this.damage);   //碰撞角度和碰撞伤害
+
+        if (this.playground.mode === "multi mode"){
+            this.playground.mps.send_attack(player.uuid, player.x, player.y, angle, this.damage, this.uuid);
+        }
         this.destroy();
     }
 
