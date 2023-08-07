@@ -32,6 +32,7 @@ class ChatField{
                 if (text){
                     outer.$input.val("");
                     outer.add_message(username, text);
+                    outer.playground.mps.send_message(text);
                 }
                 return false;
             }

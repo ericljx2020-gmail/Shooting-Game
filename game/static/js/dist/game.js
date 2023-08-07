@@ -151,6 +151,7 @@ class ChatField{
                 if (text){
                     outer.$input.val("");
                     outer.add_message(username, text);
+                    outer.playground.mps.send_message(text);
                 }
                 return false;
             }
@@ -762,6 +763,8 @@ class MultiPlayerSocket{
                 outer.receive_attack(uuid, data.attackee_uuid, data.x, data.y, data.angle, data.damage, data.ball_uuid);
             } else if (event === "blink"){
                 outer.receive_blink(uuid, data.tx, data.ty);
+            } else if (event === "message") {
+                outer.receive_message(data.uuid, data.text);
             }
         };
     }
@@ -887,6 +890,20 @@ class MultiPlayerSocket{
         if (player){
             player.blink(tx,ty);
         }
+    }
+
+    send_message(text){
+        let outer = this;
+        this.ws.send(JSON.stringify({
+            'event':"message",
+            'uuid':outer.uuid,
+            'text':text,
+        }))
+    }
+
+    receive_message(uuid, text){
+        let player = this.get_player(uuid);
+        player.playground.chat_field.add_message(player.username, text)
     }
 
 }
