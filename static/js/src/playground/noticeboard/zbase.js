@@ -5,7 +5,7 @@ class NoticeBoard extends AcGameObject{
         this.playground = playground;
         
         this.ctx = this.playground.game_map.ctx;
-        this.text = "已就绪0人";
+        this.text = "ready: 0";
 
         this.start();
     }

@@ -121,7 +121,7 @@ class ChatField{
     constructor(playground){
         this.playground = playground;
         
-        this.$history = $(`<div class="ac-game-chat-field-history">历史记录</div>`);
+        this.$history = $(`<div class="ac-game-chat-field-history">History</div>`);
         this.$input = $(`<input type="text" class="ac-game-chat-field-input">`);
 
         this.$history.hide();
@@ -236,7 +236,7 @@ class NoticeBoard extends AcGameObject{
         this.playground = playground;
         
         this.ctx = this.playground.game_map.ctx;
-        this.text = "已就绪0人";
+        this.text = "ready: 0";
 
         this.start();
     }
@@ -345,7 +345,7 @@ class Player extends AcGameObject{
 
     start(){
         this.playground.player_count++;
-        this.playground.notice_board.write("已就绪" + this.playground.player_count + "人");
+        this.playground.notice_board.write("ready:" + this.playground.player_count + " player");
 
         if (this.playground.player_count >= 3){
             this.playground.state = "fighting";
