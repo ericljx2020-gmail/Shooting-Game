@@ -1,7 +1,10 @@
 class AcGamePlayground{
     constructor(root){
         this.root = root;
-        this.$playground = $(`<div class="ac-game-playground"></div>`);
+        this.$playground = $(
+            `<div class="ac-game-playground">
+            </div>`
+        );
         this.hide();
 
         this.root.$ac_game.append(this.$playground);
@@ -17,8 +20,16 @@ class AcGamePlayground{
             outer.resize();
         });
     }
+    
 
     update(){
+    }
+
+    refresh(){
+        this.$playground = $(
+            `<div class="ac-game-playground">
+            </div>`
+        );
     }
 
     get_random_color(){
@@ -36,6 +47,11 @@ class AcGamePlayground{
 
         if (this.game_map) this.game_map.resize();
 
+    }
+
+    game_over(){
+        this.players.splice(0,this.players.length);
+        console.log(this.players.length);
     }
 
     show(mode){     //open playground scene

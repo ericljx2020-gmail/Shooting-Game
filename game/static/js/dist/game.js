@@ -5,15 +5,15 @@ class AcGameMenu{
             <div class="ac-game-menu">
                 <div class="ac-game-menu-field">
                     <div class="ac-game-menu-field-item ac-game-menu-field-item-single-mode">
-                        单人模式
+                        Single Mode
                     </div>
                     <br>
                     <div class="ac-game-menu-field-item ac-game-menu-field-item-multi-mode">
-                        多人模式
+                        Multi Mode
                     </div>
                     <br>
                     <div class="ac-game-menu-field-item ac-game-menu-field-item-settings">
-                        登出
+                        Log out
                     </div>
 
                 </div>
@@ -403,7 +403,6 @@ class Player extends AcGameObject{
             
         });
         this.playground.game_map.$canvas.keydown(function(e){
-
             if (e.which === 13){    //enter
                 if(outer.playground.mode === "multi mode"){
                     outer.playground.chat_field.show_input();      //打开聊天框
@@ -910,7 +909,10 @@ class MultiPlayerSocket{
 class AcGamePlayground{
     constructor(root){
         this.root = root;
-        this.$playground = $(`<div class="ac-game-playground"></div>`);
+        this.$playground = $(
+            `<div class="ac-game-playground">
+            </div>`
+        );
         this.hide();
 
         this.root.$ac_game.append(this.$playground);
@@ -926,8 +928,16 @@ class AcGamePlayground{
             outer.resize();
         });
     }
+    
 
     update(){
+    }
+
+    refresh(){
+        this.$playground = $(
+            `<div class="ac-game-playground">
+            </div>`
+        );
     }
 
     get_random_color(){
@@ -945,6 +955,11 @@ class AcGamePlayground{
 
         if (this.game_map) this.game_map.resize();
 
+    }
+
+    game_over(){
+        this.players.splice(0,this.players.length);
+        console.log(this.players.length);
     }
 
     show(mode){     //open playground scene
@@ -994,28 +1009,31 @@ class Settings{
 <div class="ac-game-settings">
     <div class="ac-game-settings-login">
         <div class="ac-game-settings-title">
-            登陆
+            Login
         </div>
         <div class="ac-game-settings-username">
             <div class="ac-game-settings-item">
-                <input type="text" placeholder="用户名">
+                <input type="text" placeholder="username">
             </div>
         </div>
 
         <div class="ac-game-settings-password">
             <div class="ac-game-settings-item">
-                <input type="password" placeholder="密码">
+                <input type="password" placeholder="password">
             </div>
         </div>
         <div class="ac-game-settings-submit">
             <div class="ac-game-settings-item">
-                <button>登陆</button>
+                <button>login</button>
             </div>
         </div>
         <div class="ac-game-settings-error-message">
         </div>
+        <div class="ac-game-settings-guest">
+            Guest
+        </div>
         <div class="ac-game-settings-option">
-            注册
+            register
         </div>
         <br>
         <div class="ac-game-settings-acwing">
@@ -1023,7 +1041,7 @@ class Settings{
                 <image width="30" src="https://app5694.acapp.acwing.com.cn/static/image/settings/acwing_logo.png">
                 <br>
                 <div>
-                    ACwing一键登录
+                    ACwing Login
                 </div>
             </div>
         </div>
@@ -1032,35 +1050,35 @@ class Settings{
 
     <div class="ac-game-settings-register">
         <div class="ac-game-settings-title">
-            注册
+            register
         </div>
         <div class="ac-game-settings-username">
             <div class="ac-game-settings-item">
-                <input type="text" placeholder="用户名">
+                <input type="text" placeholder="username">
             </div>
         </div>
 
         <div class="ac-game-settings-password ac-game-settings-password-first">
             <div class="ac-game-settings-item">
-                <input type="password" placeholder="密码">
+                <input type="password" placeholder="password">
             </div>
         </div>
 
         <div class="ac-game-settings-password ac-game-settings-password-second">
             <div class="ac-game-settings-item">
-                <input type="password" placeholder="确认密码">
+                <input type="password" placeholder="confirm password">
             </div>
         </div>
 
         <div class="ac-game-settings-submit">
             <div class="ac-game-settings-item">
-                <button>注册</button>
+                <button>register</button>
             </div>
         </div>
         <div class="ac-game-settings-error-message">
         </div>
         <div class="ac-game-settings-option">
-            登陆
+            login
         </div>
         <br>
         <div class="ac-game-settings-acwing">
@@ -1068,7 +1086,7 @@ class Settings{
                 <image width="30" src="https://app5694.acapp.acwing.com.cn/static/image/settings/acwing_logo.png">
                 <br>
                 <div>
-                    ACwing一键登录
+                    ACwing Login
                 </div>
             </div>
         </div>
@@ -1084,6 +1102,7 @@ class Settings{
         this.$login_submit = this.$login.find(".ac-game-settings-submit button");
         this.$login_error_message = this.$login.find(".ac-game-settings-error-message");
         this.$login_register = this.$login.find(".ac-game-settings-option");
+        this.$login_guest = this.$login.find(".ac-game-settings-guest");
         this.$login.hide();
 
         this.$register = this.$settings.find(".ac-game-settings-register");
@@ -1136,6 +1155,9 @@ class Settings{
         this.$login_register.click(function(){
             outer.register();
         });
+        this.$login_guest.click(() => {
+            this.login_on_remote_guest();
+        });
         this.$login_submit.click(function() {
             outer.login_on_remote();
         });
@@ -1151,6 +1173,29 @@ class Settings{
                 }
             }
         })
+    }
+
+    login_on_remote_guest(){
+        let outer = this;
+        let username = "guest1";
+        let password = "123";
+        this.$login_error_message.empty();
+
+        $.ajax({
+            url:"https://app5694.acapp.acwing.com.cn/settings/login/",
+            type: "GET",
+            data:{
+                username: username,
+                password: password,
+            },
+            success: function(resp){
+                if (resp.result === "success"){
+                    location.reload();
+                }else{
+                    outer.$login_error_message.html(resp.result);
+                }
+            }
+        });
     }
 
     login_on_remote() {
